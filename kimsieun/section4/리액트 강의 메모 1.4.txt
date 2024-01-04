@@ -1,0 +1,80 @@
+리액트 강의 메모 1.4
+
+- 조건적 콘텐츠 렌더링
+null은 jsx 코드로 출력할 수 있지만 아무것도 렌더링 되지 않음
+t/f ? [t일시] : [f일시] 문법 활용
+혹은 변수 선언, if문 사용
+let tabContent = <p>Please select a topic.</p>;
+
+  if (selectedTopic) {
+    tabContent = (
+      <div id="tab-content">
+        <h3>{EXAMPLES[selectedTopic].title}</h3>
+        <p>{EXAMPLES[selectedTopic].description}</p>
+        <pre>
+          <code>{EXAMPLES[selectedTopic].code}</code>
+        </pre>
+      </div>
+    );
+  }
+
+- CSS 스타일링 및 동적 스타일링
+리액트에서 class는 className 속성 사용
+
+- List(리스트) 데이터 동적 출력
+{CORE_CONCEPTS.map((conceptItem) => (
+              <CoreConcept key={conceptItem.title} {...conceptItem} />
+            ))}
+map함수 사용하여 동적으로 리스트 값 출력
+
+- JSX를 꼭 사용하지 않아도 되는 이유
+이론상으론 jsx 없이도 리액트 앱 빌드 가능
+하지만 다수가 사용중
+그치만 필수는 아님
+
+- Fragments(프래그먼트) 사용법
+jsx 표현식은 하나의 상위/부모 요소만을 가져야 함
+<...>
+  ...
+</...> 가능
+
+<...></...>
+<...></...>  불가능
+
+리액트 특성상 DOM 구조에 div가 두개 생김(임포트하다보니..)
+때문에 리액트에 내장된 프래그먼트 컴포넌트 사용
+또는 아무 기능이 없지만 태그의 역할은 가지고 있는 <> </> 사용
+
+- 감싸진 요소에 Props(속성) 전달하기
+속성을 구조 분해 할당 -> ...props
+
+- 컴포넌트 타입 동적으로 설정하기
+커스텀 컴포넌트는 동적 값이어야 함
+컴포넌트 식별자를 한 속성의 값으로 받을 수 있음
+-> 이 속성이 받는 쪽 컴포넌트에서 커스텀 컴포넌트로서 사용 가능해야함(첫글자 대문자)
+-> 식별자에는 문자열 이름 사용(menu, ul, div 등 내장 요소)
+
+- 기본 Prop(속성) 값 설정
+export default function Tabs({ children, buttons, ButtonsContainer = 'menu' }) {
+  return (
+    <>
+      <ButtonsContainer>{buttons}</ButtonsContainer>
+      {children}
+    </>
+  );
+}
+
+- 모든 콘텐츠가 컴포넌트에 보관될 필요가 없는 이유
+정적인 것들은 굳이 App.jsx를 사용할 필요가 없고 index.html에 적어도 됨
+
+- 세부 과정: 이미지 저장소는 public/ VS assets/
+하위 폴더에 저장된 모든 파일(어떤 형식이든)은 공개적으로 제공되지 않음
+따라서 빌드 프로세스에 의해 처리되지 않는 이미지는 public 폴더에,
+컴포넌트 내에서 사용되는 이미지는 보통 src/ 폴더에 저장됨
+
+개념 복습: State(상태) 활용법
+필수 조건이라는 의미로 required 속성 사용
+
+컴포넌트 인스턴스의 분리된 동작법
+동일한 컴포넌트를 사용하지만 각각 따로 작동함
+같은 로직을 공유는 하지만 서로 영향을 주지 않음
