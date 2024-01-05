@@ -1,0 +1,61 @@
+리액트 강의 메모 1.6
+
+section 4 완성된 프젝 코드들을 추후에 코드 리뷰 방식으로 복습할 예정
+
+section 5 - ~ 개념 복습 ~
+- 모듈 소개 & 도전 과제
+npm install 
+npm run dev
+근데 npx create-react-app . 으로 만들어서 npm start로 실행하면 host가 3000인데 npm install로 다운로드시 로컬호스트가 5173인 점이 궁금하여 찾아봄(당연한건데 cs 지식 부족탓인가용?...)
+우선 로컬호스트는 컴퓨터 네트워크에서 사용하는 루프백 주소
+즉 자신의 컴퓨터를 의미
+-> 컴퓨터의 네트워크 기능을 시험하기 위해 가상으로 인터넷망에 연결되어 있는 것처럼 할당하는 인터넷 주소
+(스위치 넷타입 c에서 b로 올린다고 고생할 때 8.0.8.0인가로 바꾼 기억이 나네요..)
+https://velog.io/@lky9303/127.0.0.1-%EA%B3%BC-localhost%EC%9D%98-%EC%B0%A8%EC%9D%B4
+검색해도 잘 안나와서.. 저의 부족한 지식으로 유추해보면
+그냥 서버를 run 해주는 ...종류에 따라 개발 서버의 기본 포트 번호가 각각 다르기 때문인 것 같은데
+왜 같은 리액트인데 그런건지는 모르겠지만 아무튼 리액트를 다운할 때의 명령어가 달랐으니 다른 거다....?
+지피티는 package.json에 설정된 포트 번호로 열린거다라는데 모르겠네요
+=>   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  }, 에서 "dev": "vite", vite는 기본 포트 번호가 5173이라 그런거였다....
+로직 미리 작성해둔 파일
+
+- Header(헤더) 컴포넌트 추가하기
+..? 이미지를 찾을 수 없다는 에러 ㅋㅋㅋㅋ
+오타 수정
+스타일 컴포넌트를 사용하지 않고 아이디 속성 주고 css 파일 사용
+
+- User Input(사용자 입력) 컴포넌트로 시작하기
+input 태그에 required 속성 추가
+또는 required={true} // 같은 역할
+
+- 이벤트 핸들링 & 양방향 바인딩 활용
+속성에 onChange={handleChange} 이렇게 작성을 해버리면
+리액트는 change 이벤트가 발생하면 handleChange 함수가 실행이 되지 않음
+-> chagne 이벤트가 발생하면 리액트가 이 함수를 호출하고 이벤트 객체(리액트에 의해 자동적으로 생성된 기본적인 이벤트 객체)를 전달하는데 이 객체는 inputIdentifier를 포함하지 않기 때문
+=> 익명함수 생성하여 handleChange 함수를 실행시키는 방법 사용
+onChange={() =>handleChange}
+까먹으면 안되는 개념!!
+App에서 리턴은 무조건 하나의 태그로 감싸진 형태이어야 함
+<></> 사용하기(혹은 프래그먼트)
+
+- State(상태) 끌어올리기
+
+- 값 계산하기 및 숫자 값 올바르게 다루는 방법
+event.target.value는 문자열로 반환
+-> 숫자와 연산시 NaN 오류 출력
+그래서 [inputIdentifier]: +newValue 여기서 +를 써줌으로써
+숫자 타입이라고 명시
+
+- 리스트에 결과 출력하기 및 더 많은 값 파생하기
+
+- 조건적 콘텐츠 출력
+값이 음수가 되면 충돌됨
+변수에 조건 넣기
+  const inputIsValid = userInput.duration >=1
+그리고 동적으로 출력(삼항 연산자 혹은 && 사용)
+    {inputIsValid && <Results input={userInput} />}
