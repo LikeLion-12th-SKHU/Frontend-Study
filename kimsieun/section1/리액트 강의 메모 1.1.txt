@@ -1,0 +1,34 @@
+리액트 강의 메모 1.1
+- 코드샌드박스는 코드블리츠?랑 비슷한 사이트
+- js 바닐라는 단계를 정의하기 번거롭고 어려움, 오류 가능성 높음
+- 때문에 리액트를 사용하고 상태 변경 조건만 정의하여 사용
+- https://github.com/academind/react-complete-guide-course-resources/tree/main/code
+- 크롬에서 react.new를 치면 코드샌드박스에서 할 수 있음
+- JSX 문법이란 자바스크립트 기능에 있는 특수한 HTML을 사용하는 문법
+- Capacitor나 react native로 js로 모바일 앱 제작 가능
+- <script src="app.js" defer></script>에서 defer속성은 html 문서 모두 로딩 후 실행시키는 속성
+- type="module" 속성은 js를 모듈로 취급함
+- 모듈로 취급하면 새 문법 사용이 가능함(import 등)
+- 리액트는 빌드프로세스를 사용해서 html에 js 코드가 보이지 않음
+- 이는 작성한 코드가 그대로 브라우저에서 실행되는게 아니기 때문
+- 이렇게 빌드 프로세스를 사용하고 코드를 변환하는 이유: 
+1. 처리되지 않은 리액트 코드는 브라우저에서 실행할 수 없기 때문
+2. 코드를 변환해야 정상적으로 잘 작동이 가능
+3. 코드를 최대한 줄이기 위해 최적화된 코드를 쓰기위함
+- 이런 빌드 프로세스를 쓰기 위해서는 node.js 설치가 필요하며, npm/mpx 명령어를 사용해야함
+- export와 import 문법
+방법1.
+다른 파일에도 사용할 변수나 함수 앞에 export를 작성하고,
+그 변수나 함수를 사용할 다른 파일에는 import { [변수/함수] } from "[파일경로]"를 입력해주면 된다.
+빌드 프로세스를 사용하는 리액트에서는 .js처럼 확장자를 따로 작성하지 않아도 빌드 프로세스가 확장자를 추가하기 때문에 괜찮다.
+참고로 순정 js에서 사용하려면 <script src="app.js" type="module"></script>처럼 type="module" 속성이 필수이다.
+방법2.
+변수를 선언하지 않고 export default "abc"라고 적고 import [변수명] form [파일경로];라고 하는 방법도 있다.
+이 방법은 import할 때 변수의 이름을 정하는 특징이 있으며, export할 수 있는 개수가 단 하나라는 특징이 있다.
+default 키워드를 이름있는 export와 함께 사용해도 된다.
+여러개의 export된 변수들을 한번에 import하는 방법으로는 {}안에 변수명을 ,로 구분해서 여러개 작성해도 되고,
+import * as util from "./util";처럼 util이라는 객체안에 변수들을 넣어서 import하는 방법도 있다. 이렇게 쓰게되면 변수를 사용할때 util.abc처럼 [객체명].[변수명]으로 사용해준다.
+또한 import할때 import { apikey, abc as content } from "./util";처럼 abc로 선언된 변수명을 content로 사용하도록 할수도 있다.
+- 변수와 값
+변수명에 _를 쓸 수는 있지만 일반적으로 잘 사용되지 않는다.
+- 연산자
