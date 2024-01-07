@@ -1,12 +1,15 @@
 import { useState } from "react";
 
-export default function Player({initialName, symbol, isActive}) {
+export default function Player({ initialName, symbol, isActive, onChangeName }) {
     const [playerName, setPlayerName] = useState(initialName); // 개별 상태 제어
     const [ isEditing, setIsEditing ] = useState(false);
 
     function handleEditClick() {
-        setIsEditing((editing) => !editing);
-        // setIsEditing(!isEditing); // => schedules a state update to true
+      setIsEditing((editing) => !editing);
+      // setIsEditing(!isEditing); // => schedules a state update to true
+      if (isEditing) {
+        onChangeName(symbol, playerName);
+      }
     }
 
     function handleChange(event) {

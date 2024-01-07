@@ -3,10 +3,16 @@ import { useState } from "react";
 import Player from "./components/Player.jsx";
 import GameBoard from "./components/GameBoard.jsx";
 import Log from "./components/Log.jsx";
+import GameOver from "./components/GameOver.jsx";
 import { WINNING_COMBINATIONS } from "./winning-combinations.js";
 
-const initialGameBoard = [
-  [null, null, null],
+const PLAYERS = { // 기술적 필수는 아니지만 이 애플리케이션을 위해 정의된 일반 상수임을 보여줌.
+  X: 'Player 1',
+  O: 'Player 2'
+};
+
+const INITIAL_GAME_BOARD = [ // 대문자_ => 이 앱을 위한 일반상수
+  [null, null, null], // 자바스크립트에서 null은 false로 인식.
   [null, null, null],
   [null, null, null],
 ];
@@ -21,7 +27,44 @@ function deriveActivePlayer(gameTurns) {
   return currentPlayer;
 }
 
+function deriveGameBoard(gameTurns) {
+  let gameBoard = [...INITIAL_GAME_BOARD.map(array => [...array])];
+
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+
+    gameBoard[row][col] = player;
+  }
+
+  return GameBoard;
+}
+
+function deriveWinner(gameBoard, players) {
+  let winner;
+
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol = 
+      gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol = 
+      gameBoard[combination[1].row][combination[1].column];
+    const thirdSquareSymbol = 
+      gameBoard[combination[2].row][combination[2].column];
+
+    if (
+      firstSquareSymbol && 
+      firstSquareSymbol === secondSquareSymbol && 
+      firstSquareSymbol === thirdSquareSymbol
+    ) {
+      winner = players[firstSquareSymbol];
+    }
+  }
+
+  return winner;
+}
+
 function App() {
+  const [ players, setPlayers ] = useState({PLAYERS});
   const [gameTurns, setGameTurns] = useState([]);
 
   // 이 부분은 잘못되지는 않았지만 불필요함. - 동일 내용 반복
@@ -31,20 +74,12 @@ function App() {
 
   const activePlayer = deriveActivePlayer(gameTurns);
 
-  let gameBoard = initialGameBoard;
+  // 게임을 재시작할 때 기존 배열이 아닌 새로운 배열을 추가하게 하는 코드 => rematch 정상 작동.
+  const gameBoard = deriveGameBoard(gameTurns); // 아웃소싱
 
-    for (const turn of gameTurns) {
-        const { square, player } = turn;
-        const { row, col } = square;
+  const winner = deriveWinner(gameBoard, players); // 아웃소싱
 
-        gameBoard[row][col] = player;
-    }
-
-  for (const combination of WINNING_COMBINATIONS) {
-    const firstSquareSymbol = gameBoard[]
-    const secondSquareSymbol 
-    const thirdSquareSymbol 
-  }
+  const hasDraw = gameTurns.length === 9 && !winner;
 
   // 버튼이 클릭되었을 때 실행되는 함수
   function handleSelectSquare(rowIndex, colIndex) {
@@ -62,13 +97,40 @@ function App() {
       return updatedTurns;
     });
   } 
+  
+  // GameOver 컴포넌트 안에서 이 함수가 촉진되도록 하면 됨.
+  function handleRestart() {
+    setGameTurns([]);
+  }
+
+  function handlePlayerNameChange(symbol, newName) {
+    setPlayers(prevPlayers => {
+      return {
+        ...prevPlayers,
+        [symbol]: newName
+      };
+    });
+  }
 
   return <main>
     <div id="game-container">
       <ol id="players" className="highlight-player">
-        <Player initialName="Player 1" symbol="X" isActive={activePlayer === 'X'} />
-        <Player initialName="Player 2" symbol="O" isActive={activePlayer === 'O'} />
+        <Player 
+          initialName={PLAYERS.X} 
+          symbol="X" 
+          isActive={activePlayer === 'X'} 
+          onChangeName={handlePlayerNameChange}
+        />
+        <Player 
+          initialName={PLAYERS.O} 
+          symbol="O" 
+          isActive={activePlayer === 'O'} 
+          onChangeName={handlePlayerNameChange}
+        />
       </ol>
+      {(winner || hasDraw) && (
+        <GameOver winner={winner} onRestart={handleRestart} />
+      )}
       <GameBoard 
         onSelectSquare={handleSelectSquare} 
         board = {gameBoard} 
