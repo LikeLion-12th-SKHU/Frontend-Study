@@ -1,0 +1,54 @@
+리액트 스터디 강의 메모 24/01/10
+
+section 9
+(여기도 코드리뷰식으로 나중에 차차 다시 정리할 예정)
+복습 내용은 메모 생략
+
+- 컴포넌트 간 교환을 위한 State(상태) 관리법
+const [projectsState, setProjectsState] = useState({
+    selectedProjectId: undefined,
+    projects: [],
+}) 로 정의하는 것은
+새로운 프로젝트 추가 X, 선택 X 의미
+
+- Refs(참조)와 전달된 Refs(참조)로 사용자 입력 받아오기
+SelectedProjectID를 undifined로 설정하면 다시 모달 없는 화면으로
+
+- 사용자 입력 유효성 검사 & useImperativeHandle로 에러 모달 띄우기
+유효성 검사 = 쓴 내용이 ''(빈문자열)이면 유효하지 않다고 판단
+if (
+      enteredTitle.trim() === '' || //OR 연산자
+      enteredDescription.trim() === '' ||
+      enteredDueDate.trim() === ''
+    ) {
+      modal.current.open();
+      return; //에러 모달 띄우기
+    }
+import { forwardRef, useImperativeHandle, useRef } from 'react'; 사용
+
+- 선택 가능한 프로젝트 구현 및 프로젝트 정보 보기
+toLocaleDateString('en-US') 미국 기준 날짜 포맷
+두번째 인자에 year: 'numeric', month: 'short', day: 'numeric',}로 표시 길이 설정
+
+- 프로젝트 삭제 핸들링
+function handleDeleteProject() {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: undefined,
+        projects: prevState.projects.filter(
+          (project) => project.id !== prevState.selectedProjectId
+        ),
+      };
+    });
+}
+
+- “프로젝트 태스크” 및 태스크 컴포넌트 추가
+Tasks.jsx 추가 및 다른 파일에 임포트하기
+스타일 추가
+
+- 태스크 관리 & Prop Drilling 이해하기
+Prop Drilling은 다음섹션에서 더 자세히
+
+- 태스크 지우기 & 사소한 버그 고치기
+onClick={() => onDelete(task.id)}로 수정하여 해결
