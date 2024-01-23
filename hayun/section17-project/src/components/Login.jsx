@@ -1,6 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Login() {
+  const [emailIsInvaild, setEmailIsInvalid] = useState(false);
+
   const email = useRef();
   const password = useRef();
 
@@ -10,7 +12,19 @@ export default function Login() {
     const enteredEmail = email.current.value;
     const enteredPassword = password.current.value;
 
-    console.log(enteredEmail, enteredPassword);
+    // 직접 DOM 업데이트하는 방식이므로 비추
+    // email.current.value = '';
+
+    const emailIsvaild = enteredEmail.includes('@');
+
+    if (!emailIsvaild) {
+      setEmailIsInvalid(true);
+      return;
+    }
+
+    setEmailIsInvalid(false);
+
+    console.log('Sending HTTP request...');
   }
 
   return (
@@ -21,6 +35,9 @@ export default function Login() {
         <div className="control no-margin">
           <label htmlFor="email">Email</label>
           <input id="email" type="email" name="email" ref={email}/>
+          <div className="control-error">
+            {emailIsInvaild && <p>Please enter a valid email address.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
