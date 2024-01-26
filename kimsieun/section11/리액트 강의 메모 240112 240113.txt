@@ -1,0 +1,75 @@
+리액트 강의 메모 240112, 240113
+
+ctrl + 스페이스바 => 자동추천 기능
+
+section11
+
+- 모듈 소개 & 초기 프로젝트
+npm install 
+npm run dev
+
+- Side Effect(부수 효과)가 무엇인지 예시를 통한 소개
+앱이 제대로 동작하기 위해 꼭 실행되어야 하지만 현재의 컴포넌트 렌더링 과정에 직접적인 영향을 미치지는 않는 작업
+navigator 객체
+브라우저가 해당 브라우저 내에서 구동되는 js 코드에 노출시키는 객체
+-> 사용자의 위치를 얻을 수 있음
+navigator.geolocation.getCurrentPosition() 사용
+
+- Side Effect(부수 효과)의 잠재적 문제: 무한 루프
+
+- useEffect를 사용하는 Side Effect(부수 효과)
+import { useRef, useState, useEffect } from 'react';
+useEffect는 ref와 state와 다르게 값을 반환하지 않음
+useEffect();
+대신 두개의 인수(1. 부수 효과 코드 묶을 함수 / 2.의존성 배열) 가 필요로함
+-> 무한 루프에서 벗어나게 됨
+앱 컴포넌트가 실행되어도 바로 부수 효과 코드들이 실행되지 X
+의존성 배열 값이 변화했을 경우에만 함수 재실행
+
+- 모든 Side Effect(부수 효과)가 useEffect를 사용하지 않는 이유
+과한 useEffect 사용은 좋지 않음
+localStorage 객체
+브라우저가 제공하는 객체로 setItem([식별자],[저장될 값(항상 문자열)]) 메소드를 사용하여 브라우저의 저장소에 데이터를 저장할 수 있음 (재로딩해도 데이터가 그대로 유지)
+객체를 문자열로 변환하고 싶다면
+JSON.stringify([객체]) 사용
+
+- useEffect가 필요 없는 경우: 다른 예시
+useEffect를 사용하여 storedIds를 업데이트하고 해당 ID에 대한 장소를 localStorage에서 삭제
+localStorage.getItem을 통해 데이터를 불러오고 화면에 표시
+localStorage는 동기적으로 작동, 별도의 비동기 처리나 콜백 함수가 필요하지 않음
+
+- useEffect를 활용하는 다른 적용 사례
+forwardRef 및 useImperativeHandle 대신 open prop을 사용하여 모달의 열림 및 닫힘 상태를 관리
+modalIsOpen 상태와 setModalIsOpen 함수를 사용하여 모달의 열림 및 닫힘을 제어
+useEffect를 사용하여 modalIsOpen 값이 변경될 때마다 showModal 또는 close 메소드를 호출
+
+- 브라우저 API를 싱크를 위한 useEffect 활용
+open prop을 의존성 배열에 추가하여 useEffect가 open 값이 변경될 때마다 실행
+useEffect의 의존성 배열에는 open과 같이 특정 값이나 상태를 추가해야함
+
+- Effect Dependencis(의존성) 이해하기
+useEffect의 의존성 배열-> 컴포넌트 함수를 다시 실행하도록 하는 값
+의존성 배열에 포함된 값들은 해당 useEffect 내에서 사용되었을 때 그 값이 변경될 때마다 useEffect가 실행
+
+
+- 작은 버그 수정하기
+모달을 ESC 키로 눌러 닫을경우 모달 창은 닫히지만 open 프로퍼티에 false로 전달되지 않음
+-> <dialog>에 내장된 onCloseProp을 추가
+<dialog className="modal" ref={dialog} onClose={onClose}>
+
+- useEffect의 도움으로 고칠 수 있는 다른 문제들
+
+
+- useEffect의 Cleanup 함수 소개
+
+- 객체의 문제점 & 함수 의존성
+
+- useCallback 훅
+
+- useEffect의 Cleanup 함수: 다른 예시
+
+- State(상태) 업데이트 최적화
+
+
+section12
+완전 복습 내용이라 후에 코드 리뷰식으로 정리
