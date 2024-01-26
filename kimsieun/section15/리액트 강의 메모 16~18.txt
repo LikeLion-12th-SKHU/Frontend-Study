@@ -1,0 +1,158 @@
+리액트 강의 메모 16일차~18일차
+
+Section 15: HTTP 요청 보내기(예: 데이터베이스 연결)
+
+- 데이터베이스 연결/해지하는 방법
+리액트앱과 데베 연결
+직접적으로 연결하지는 X
+파일 시스템은 쉽게 접근할 수 X
+-> 백엔드 서버와 소통하는 것이 좋음
+백엔드는 웹사이트 유저가 접근 불가
+프와 백 연결은 http 요청 사용함
+http 요청 보낼 떄 백엔드가 수락한 것만 가능
+
+- 초기 프로젝트 & 임시 백엔드 API
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP
+https://www.youtube.com/watch?v=0oXYLzuucwE
+node.js로 쓰인 백엔드 파일 포함
+
+- 앱의 데이터 Fetching을 위한 준비
+node app.js 입력하여 백엔드 서버 시작
+입력후 아무것도 안뜨는게 정상(실행된거임)
+localStorage.getItem() 사용하여 데이터 가져오기
+-> 실시간으로 접속 가능, 데이터 즉각 준비됨
+백엔드에서 데이터를 보내주는데 약간의 시간이 소요될 수 있음
+그런데 이러면 컴포넌트는 그 데이터를 기다릴 수 없음
+그래서 state로 빈 데이터 초기화해주고 데이터 가져와 재실행하며 사용
+
+- HTTP 요청을 보내지 않는 방법 (잘못된 이유 부가 설명)
+fetch()함수는 브라우저 제공 함수
+인자로 '요청을 보내려는 서버의 주소' 문자열
+
+- useEffect로 HTTP 요청 (GET 요청) 전송하기
+Effect함수는 의존성이 바뀌었다는 전제하에 항상 컴포넌트 함수가 실행된 직후 즉시 실행됨
+<img
+    src={`http://localhost:3000/${place.image.src}`}
+    alt={place.image.alt}
+/> //로 이미지 파일 가져오기
+
+- async / await 사용하기
+비동기 async await 구문
+
+- 로딩 State(상태) 다루기
+대체 텍스트 
+
+- HTTP 에러 다루기
+fetching 실패 요인 두가지
+데이터 요청 실패
+백엔드의 에러
+try-catch 문 사용하기
+데이터 가져올 때 상태들이 함께 작동함
+
+- Fetch된 데이터 변환
+navigator.geolocation.getCurrentPosition((position) => {
+    const sortedPlaces = sortPlacesByDistance(
+    places,
+    position.coords.latitude,
+    position.coords.longitude
+    );
+  setAvailablePlaces(sortedPlaces);
+  setIsFetching(false);
+}); 브라우저 제공 navigator 사용
+
+- 코드 추출 및 코드 구조 개선
+
+- POST 요청으로 데이터 전송
+export async function updateUserPlaces(places) {
+  const response = await fetch('http://localhost:3000/user-places', {
+    method: 'PUT', //기본이 get, post 방식으로 설정
+    body: JSON.stringify({ places }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error('Failed to update user data.');
+  }
+
+  return resData.message;
+}
+업데이트된 데이터 배열을 백엔드로 보냄
+put 요청과 함께 보내지는 데이터는 배열이면 안됨
+places키를 가진 객체이어야 함
+
+- 최적의 업데이트 방법
+<Error
+      title="An error occurred!"
+      message={errorUpdatingPlaces.message}
+      onConfirm={handleError}
+/>
+
+- 데이터 삭제 (DELETE HTTP 요청)
+
+- 실습: 데이터 Fetching
+많은 코드 작성 및 수정..
+
+
+
+Section 16: 커스텀 리액트 hook 빌드
+
+- 모듈 소개 & 초기 프로젝트
+사용자 정의 커스텀 훅
+npm install
+npm run dev / node app.js
+
+- “Hooks(훅)의 규칙” 복습 & 훅을 사용하는 이유
+if문 등의 구문 중첩 사용이 가능하도록
+컴포넌트 함수에 들어가는 코드를 감싸고 재사용하기 위해
+
+- 커스텀 Hooks(훅) 생성하기
+hooks 폴더에 useFetch.js 파일 생성
+함수가 use로 시작되어야 함
+
+
+- 커스텀 Hooks(훅): State(상태) 관리 & 상태 값 반환
+
+- 커스텀 Hooks(훅)에서 중첩 함수 노출시키기
+
+- 다중 컴포넌트에서 커스텀 Hook(훅) 사용하기
+
+- 유동성 있는 커스텀 Hooks(훅) 생성하기
+
+
+
+Section 17: 양식 및 사용자 입력 작업
+모듈 소개 & 초기 프로젝트
+02:04
+Forms 소개 및 까다로운 이유
+03:59
+Form 제출 다루기
+10:26
+State(상태) & 일반 Handler로 사용자 입력 수집 및 관리
+11:12
+Refs(참조)로 사용자 입력 수집
+04:35
+FormData & 네이티브 브라우저 API로 값 채취
+09:03
+Form 초기화하기
+04:38
+State(상태)로 매 키보드 입력마다 유효성 검사하기
+06:58
+Blur 상태시 입력 유효성 검사
+07:53
+Form 제출시 입력 유효성 검사
+07:54
+내장된 검증 Props(속성)으로 입력 유효성 검사
+04:59
+커스텀과 내장 검증 로직 혼합
+04:28
+재사용 가능한 입력 컴포넌트 구축 및 활용
+10:05
+유효성 검사(검증) 로직 아웃소싱
+03:22
+커스텀 useInput Hook(훅) 생성
+15:11
+서드 파티 Form 라이브러리 사용하기
