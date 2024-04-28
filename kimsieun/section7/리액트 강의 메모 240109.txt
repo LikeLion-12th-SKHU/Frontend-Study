@@ -1,0 +1,97 @@
+리액트 강의 메모 24/01/09
+
+section 8
+
+- 모듈 소개 & 초기 프로젝트
+참조(Refs), 포탈(Portals): 특정 문제를 해결해줌
+
+- 복습: State(상태)를 사용한 사용자 입력 관리 (양방향 바인딩)
+- 복습: Fragments (프래그먼트)
+
+- Refs(참조) 소개: Refs(참조)로 HTML 요소 연결 및 접근
+import { useRef } from 'react'; 로 임포트하기
+const playerName = useRef(); 로 선언하기
+<input ref={playerName} type="text" />로 사용하기
+ref={playerName}에서 ref는 속성이름, {playerName} 참조값
+useRef로 받는 참조값들을 항상 js 객체이며, 항상 current 속성을 가짐
+current 속성은 실제 참조값을 갖고 있음
+enteredPlayerName ?? 'unknown entity'
+= enteredPlayerName ? enteredPlayerName : 'unknown entity'
+같은 기능
+
+- Refs(참조)로 DOM 제어
+- Refs(참조) VS State(상태) 값
+참조는 값이 변경되어도 컴포넌트 함수가 재실행되지 않음
+상태는 값이 변경되면 재실행하여 값을 업데이트 함
+
+- 데모 프로젝트에 도전 과제 추가하기
+TimerChallenge 컴포넌트 함수 생성
+
+- 타이머 설정 & State(상태) 관리
+() => {}, 1000
+함수 뒤 , 1000는 함수가 1000밀리초 뒤에 실행되는 것을 의미
+
+- “DOM 요소 연결” 외 Refs(참조) 활용법
+참조는 컴포넌트가 재실행될 때 초기화 되지 않는 경우에 좋음
+
+- 모달 컴포넌트 추가하기
+모달은 화면 위에 뜨는 대화창 같은 것
+dialog태그는 내장 태그로 오버레이 속성을 가짐
+이런 창을 닫고 싶다면
+<form method='dialog'>
+  <button>close</..>
+</form> 으로 폼 태그 속성에 method='dialog'를 작성하고 버튼 생성
+dialog태그에 open 속성을 적용해야 보임
+
+- 커스텀 컴포넌트로 Refs(참조) 전달
+.showModal()메소드는 호출하면 dailog 태그를 표시할 수 있음
+참조를 다른 컴포넌트로 전달할 수 없음
+ex)
+const dialog = useRef();
+<ResultModal ref={dailog} ... /> 로 프롭스 전달하면 콘솔창에 오류 뜸
+-> fowardRef 함수 사용
+import { forwardRef, useRef } from 'react';
+const ResultModal = forwardRef(function ResultModal({...}){...} 로 사용
+여기서 ResultModal의 두번째 인자로 참조 값 받아옴
+참고로 {}는 구조분해 인자로, 하나로 치고 ({...}, ref)로 써야함
+물론 forwardRef 함수 사용시에만 가능
+구조분해 인자는 인자의 이름을 마음대로 지어도 됐지만, 참조 인자는 무조건 ref로만 써야함
+
+- userImperativeHandle 훅으로 컴포넌트 API 노출시
+import { forwardRef, useImperativeHandle, useRef } from 'react';로 리액트에 내장된 userImperativeHandle훅 사용하기
+userImperativeHandle() 로 사용
+인자는 두개가 필요
+첫번째는 forwardRef로 부터 받아온 참조값 ref, 
+두번째는 객체를 반환하는 함수(속성과 메소드를 모아둠)
+메소드의 이름은 자유롭게 정하되, 메소드의 내용은 내장된 것들로 씀
+useImperativeHandle(ref, () => {
+    return {
+      open() {
+        dialog.current.showModal();
+      },
+    };
+}); 이런식으로 (open은 커스텀 가능, showModal은 내장 메소드)
+dialog.current.open(); 으로 사용함
+
+- 추가 예시: Refs(참조)와 State(상태)를 사용해야 하는 경우
+setInterval()는 js의 간격 설정 내장 함수
+
+- 컴포넌트 간의 State(상태) 공유
+onReset 이벤트는 폼이 초기화 될때 실행 
+
+- 데모 앱의 “결과 모달창” 개선
+
+- 모달을 ESC(Escape) 키로 닫기
+(원래 가능한 기능 but onReset 함수 실행 X)
+ESC 키로 대화창을 닫을 때 onReset이 트리거되도록 하려면 
+<dialog> 요소에 내장된 onClose 속성을 추가하고 
+그 값을 onReset속성에 바인딩해야함
+<dialog ref={dialog} className="result-modal" onClose={onReset}
+   ...
+</dialog>
+
+- Portals(포탈) 소개 및 이해하기
+import { createPortal } from 'react-dom';
+return createPortal( ... ) 로 사용하기
+사용하면 출력 위치를 다르게 할 수 있음
+-> jsx 코드 렌더링이 현재 앱에서 사용하고 있는 곳이 아니라 웹페이지의 다른 곳에 가야하는 모달이 있을 때 포탈을 주로 사용함

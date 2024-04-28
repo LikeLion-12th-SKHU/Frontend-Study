@@ -1,0 +1,98 @@
+리액트 스터디 강의 메모 24/01/11
+
+section10
+드뎌 리듀서
+- Prop Drilling 이해 & 프로젝트 개요
+Prop Drilling = 프로퍼티 내리꽂기 = 여러 층의 컴포넌트를 거쳐 데이터 넘겨주기
+
+- Prop Drilling: 컴포넌트 구성으로 해결하기
+Prop Drilling 해결책 -> component composition
+Shop.jsx에서 App.jsx로 옮기기
+-> 속성으로 끌어오던 값을 그냥 바로 작성해줌
+하지만 이게 최적의 방법은 아님
+
+- 컨텍스트 API 소개
+컴포넌트나 컴포넌트 레이어간의 데이터 공유를 용이하게 함
+state와의 연결이 쉬움
+state를 context 값에 연결하면 앱 전체에 제공되는 방식으로 사용됨
+state에 연결된 context 값이 앱의 모든 컴포넌트에 제공됨
+
+- 컨텍스트 소개 및 부여
+~ 리액트 관습 ~
+컨텍스트 값을 파일에 저장하고 그 파일을 모아둔 폴더 이름은 store로
+언제나처럼 import { createContext } from "react";로 임포트,
+const [변수명] = createContext([여기에초기값(객체가능)]);로 사용
+이제 export해주고 App.jsx에서 임포트 해주기
+import { CartContext } from './store/shopping-cart-context.jsx';
+그리고 사용하려면 App.jsx에서 return()을 <>나 <div>가 아닌
+방금 설정해둔 변수명.Provider로 사용해줌
+return (
+    <CartContext.Provider>
+      <Header
+        cart={shoppingCart}
+        onUpdateCartItemQuantity={handleUpdateCartItemQuantity}
+      />
+      <Shop>
+        {DUMMY_PRODUCTS.map((product) => (
+          <li key={product.id}>
+            <Product {...product} onAddToCart={handleAddItemToCart} />
+          </li>
+        ))}
+      </Shop>
+    </CartContext.Provider>
+);
+여기서 Provider 속성은 유효한 리액트 컴포넌트를 가지고 있기 때문에 .을 사용해도 가능함
+
+- 컨텍스트 소비하기
+컨텍스트를 사용(정의X, 소비O)하는 jsx 파일에서는 createContext가 아닌 useContext를 임포트
+import { useContext } from "react";
+그리고 useContext(CartContext); 이렇게 사용
+참고로 모든 컴포넌트를 사용할 때 컴포넌트에 값 속성을 추가해야함
+<CartContext.Provider value={{items: []}}> 이렇게
+
+- 컨텍스트와 State(상태) 연결하기
+context와 state가 같은 모양의 객체로 만들어 두면
+<CartContext.Provider value={shoppingCart}>
+이처럼 컴포넌트의 값 속성에 state로 사용할 수 있음
+이렇게 하면 context와 state가 연결됨
+그러나 컨텍스트를 통해 상태를 수정하고 싶다면 다른 방법을 사용함
+  const ctxValue = {
+    items: shoppingCart.items,
+    addItemToCart: handleAddItemToCart
+  } 를 선언하고
+<CartContext.Provider value={ctxValue}>로 사용
+또한 추가한 addItemToCart함수를 더미 함수로 컨텍스트 객체에 넣어주기
+export const CartContext = createContext({
+  items: [],
+  addItemToCart: () => {},
+});
+그 후 addItemToCart함수 사용 가능
+
+- 컨텍스트를 소비하는 여러가지 방법
+useContext대신 code base 사용도 가능(구식)
+CartContext.Provider 대신 <CartContext.Consumer> 컴포넌트 사용 가능
+Consumer 컴포넌트는 특수한 자식 속성이 필요
+
+- 컨텍스트 값이 바뀌면 생기는 일
+재실행
+
+- 전체 데모 앱에 컨텍스트 API 적용하기
+필요한 곳에서만 사용해도 되는게 컨텍스트의 장점
+
+- 컨텍스트 아웃소싱 & 분리된 제공자 컴포넌트에 State(상태) 부여
+export default function CartContextProvider({ children }) {}
+App.jsx가 아닌 context.jsx 파일에 state 내용 옮기기
+(useState 등 임포트 필수)
+return (
+    <CartContext.Provider value={ctxValue}>{children}</CartContext.Provider>
+);로 리턴값 작성해주기
+
+- useReducer 훅 소개
+리듀서는 useState와 같은 역할을 하지만 조금 더 복잡한 상태를 체계적으로 관리함
+-> 복잡한 값을 단순한 형태로 만드는 함수
+import { useReducer } from 'react';로 임포트
+함수를 컴포넌트 함수 밖에 만들면 재실행을 막을 수 있음
+-> 직접적인 액세스가 필요없을 때 밖에서 정의함
+
+- Action 보내기 & useReducer로 State(상태) 수정하기
+리듀서 훅은 필수가 아니지만 편리함

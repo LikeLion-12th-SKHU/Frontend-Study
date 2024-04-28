@@ -1,0 +1,103 @@
+리액트 강의 메모 24/01/07
+
+section 6
+
+- 모듈 소개 & 프로젝트 시작하기
+바닐라 css 파일 대신에 스타일 컴포넌트 사용
+npm install
+npm run dev
+
+- CSS 코드 여러 파일에 분단하기
+css 파일 생성 후 해당 스타일이 적용될 컴포넌트 파일에 import하기
+
+- 바닐라 CSS로 리액트 앱 스타일링하기 - 장.단점
+장점: css 파일 공유 가능
+단점: 밑에 계속...
+
+- 바닐라 CSS 스타일이 컴포넌트에 스코핑되지 않는 이유
+단점: css를 임포트 하지 않은 다른 컴포넌트 스타일에도 영향을 줌
+(스코핑되지 않는다 = 특정한 함수에만 적용되지 않고 다 적용된다)
+
+- Inline(인라인) 스타일로 리액트 앱 스타일링하기
+바닐라 html 문서에서 작성하듯이 태그안에 속성으로 스타일 적용
+대신에 스타일 속성 값을 문자열이 아닌 동적으로({{css 문법(근데 color, text-align 등 이런건 js 문법으로(카멜표기법으로->textAlign)}}) 설정 해야함(안그러면 오류)
+<p style={{
+  color: 'red'
+}}> 어쩌고 </p>
+장점: 쉽게 추가할 수 있음
+단점: 재사용 불가능
+
+- 동적 및 조건적 Inline(인라인) 스타일
+삼항연산자 사용 가능
+style={{
+  backgroundColor: emailNotValid ? 'red' : 'white'
+}}
+
+- CSS 파일과 CSS 클래스를 사용한 동적 및 조건적 스타일링
+{``} -> 템플릿 리터럴
+{`label ${}`} -> 문자열이긴 한데 ${} 부분에 문자열을 추가할 수 있음
+사용 예시: {`label ${emailNotValid ? 'invalid' : ''}`}
+
+- CSS 모듈로 CSS 규칙 스코핑하기
+css 파일 이름을 Header.css에서 Header.module.css로 변경하여 사용
+import classes from './Header.module.css' 로 임포트(바닐라 css 파일 임포트는 classes from없이 임포트함) 
+스코핑하려면 <p className={classes.paragraph}>
+
+- “Styled Components” 소개 (서드 파티 패키지)
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates
+npm install styled-components
+import { Styled } from 'styled-components';
+styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+` 으로 사용(보통 변수에 넣어서 변수 이용함)
+
+- Styled Components로 유동적 컴포넌트 생성
+const Label = styled.label`
+  display: block;
+  color: ${({ $invalid }) => ($invalid ? '#f87171' : '#6b7280')};
+`; 로 스타일 컴포넌트 생성
+컴포넌트 안에
+<Label>어쩌고</Label> 으로 사용 가능
+
+- Styled Components로 동적 및 조건적 스타일링
+위에서 사용한 color: ${({ $invalid }) => ($invalid ? '#f87171' : '#6b7280')}
+여기에 삼항연산자, () => 함수 사용되고, ``안에 ${} 사용됨
+<Label $invalid={emailNotValid}>...</Label>
+
+- Styled Components: 가상 선택자, 중첩 규칙 & 미디어 쿼리
+const StyledHeader = styled.header`
+  display: flex;
+  ...
+
+  & img {
+    object-fit: contain;
+    ...
+  }
+  
+  & h1 {
+    font-size: 1.5rem;
+    ...
+    margin: 0;
+  }
+  
+  & p {
+    text-align: center;
+    ...
+  }
+  
+  @media (min-width: 768px) {
+  
+    margin-bottom: 4rem;
+  
+    & h1 {
+      font-size: 2.25rem;
+    }
+  }
+`; 이렇게 & 이용하여 사용(여기서 &는 header 태그를 의미)
+&:hover는 header.hover
+
+- 재사용 가능 컴포넌트 생성 및 컴포넌트 조합
+스타일 컴포넌트 별로 각각의 다른 파일에 저장하는 것을 추천
